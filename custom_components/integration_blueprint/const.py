@@ -1,6 +1,6 @@
 """Huawei LTE constants."""
 
-DOMAIN = "huawei_lte"
+DOMAIN = "integration_blueprint"
 
 CONF_MANUFACTURER = "manufacturer"
 CONF_TRACK_WIRED_CLIENTS = "track_wired_clients"
