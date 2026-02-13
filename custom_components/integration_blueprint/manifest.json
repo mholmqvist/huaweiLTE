@@ -6,7 +6,23 @@
   ],
   "config_flow": true,
   "documentation": "https://github.com/ludeeus/integration_blueprint",
-  "iot_class": "cloud_polling",
+  "iot_class": "local_polling",
+  "loggers": ["huawei_lte_api.Session"],
   "issue_tracker": "https://github.com/ludeeus/integration_blueprint/issues",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "requirements": ["huawei-lte-api==1.11.0", "url-normalize==2.2.1"],
+  "ssdp": [
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "Huawei"
+    },
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "Huawei Technologies Co., Ltd."
+    },
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "SOYEA TECHNOLOGY CO., LTD."
+    }
+  ]
 }

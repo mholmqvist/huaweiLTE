@@ -1,28 +1,68 @@
-"""BlueprintEntity class."""
+"""Support for Huawei LTE routers."""
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity import Entity
 
-from .const import ATTRIBUTION
-from .coordinator import BlueprintDataUpdateCoordinator
+from . import Router
+from .const import UPDATE_SIGNAL
+
+SCAN_INTERVAL = timedelta(seconds=10)
 
 
-class IntegrationBlueprintEntity(CoordinatorEntity[BlueprintDataUpdateCoordinator]):
-    """BlueprintEntity class."""
+class HuaweiLteBaseEntity(Entity):
+    """Huawei LTE entity base class."""
 
-    _attr_attribution = ATTRIBUTION
+    _available = True
+    _attr_has_entity_name = True
+    _attr_should_poll = False
 
-    def __init__(self, coordinator: BlueprintDataUpdateCoordinator) -> None:
+    def __init__(self, router: Router) -> None:
         """Initialize."""
-        super().__init__(coordinator)
-        self._attr_unique_id = coordinator.config_entry.entry_id
-        self._attr_device_info = DeviceInfo(
-            identifiers={
-                (
-                    coordinator.config_entry.domain,
-                    coordinator.config_entry.entry_id,
-                ),
-            },
+        self.router = router
+
+    @property
+    def _device_unique_id(self) -> str:
+        """Return unique ID for entity within a router."""
+        raise NotImplementedError
+
+    @property
+    def unique_id(self) -> str:
+        """Return unique ID for entity."""
+        return f"{self.router.config_entry.unique_id}-{self._device_unique_id}"
+
+    @property
+    def available(self) -> bool:
+        """Return whether the entity is available."""
+        return self._available
+
+    async def async_update(self) -> None:
+        """Update state."""
+        raise NotImplementedError
+
+    async def async_added_to_hass(self) -> None:
+        """Connect to update signals."""
+        self.async_on_remove(
+            async_dispatcher_connect(self.hass, UPDATE_SIGNAL, self._async_maybe_update)
+        )
+
+    async def _async_maybe_update(self, config_entry_unique_id: str) -> None:
+        """Update state if the update signal comes from our router."""
+        if config_entry_unique_id == self.router.config_entry.unique_id:
+            self.async_schedule_update_ha_state(True)
+
+
+class HuaweiLteBaseEntityWithDevice(HuaweiLteBaseEntity):
+    """Base entity with device info."""
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Get info for matching with parent router."""
+        return DeviceInfo(
+            connections=self.router.device_connections,
+            identifiers=self.router.device_identifiers,
         )
