@@ -7,9 +7,8 @@
   "config_flow": true,
   "documentation": "https://github.com/ludeeus/integration_blueprint",
   "iot_class": "local_polling",
-  "loggers": ["huawei_lte_api.Session"],
   "issue_tracker": "https://github.com/ludeeus/integration_blueprint/issues",
-  "version": "0.1.0",
+  "loggers": ["huawei_lte_api.Session"],
   "requirements": ["huawei-lte-api==1.11.0", "url-normalize==2.2.1"],
   "ssdp": [
     {
@@ -24,5 +23,6 @@
       "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
       "manufacturer": "SOYEA TECHNOLOGY CO., LTD."
     }
-  ]
+  ],
+  "version": "0.1.0"
 }
